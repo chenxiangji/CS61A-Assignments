@@ -25,6 +25,12 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return 0
+    elif n % 10 == 8:
+        return 1 + num_eights(n // 10)
+    else:
+        return num_eights(n // 10)
 
 
 def digit_distance(n):
@@ -47,6 +53,10 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n // 10 == 0:
+        return 0
+    else:
+        return abs(n % 10 - (n // 10) % 10) + digit_distance(n // 10)
 
 
 def interleaved_sum(n, odd_func, even_func):
@@ -71,6 +81,21 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+
+    # if n == 0:
+    #     return 0
+    # elif n % 2 == 0:
+    #     return even_func(n) + interleaved_sum(n - 1, odd_func, even_func)
+    # elif n % 2 == 1:
+    #     return odd_func(n) + interleaved_sum(n - 1, odd_func, even_func)
+    def help(k, is_odd):
+        if k > n:
+            return 0
+        elif is_odd:
+            return odd_func(k) + help(k + 1, False)
+        elif not is_odd:
+            return even_func(k) + help(k + 1, True)
+    return help(1, True)
 
 
 def next_smaller_dollar(bill):
@@ -107,6 +132,14 @@ def count_dollars(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def count_using(amount, max_dollar):
+        if amount == 0:
+            return 1
+        if amount < 0 or max_dollar is None:
+            return 0
+        return count_using(amount, next_smaller_dollar(max_dollar)) + count_using(amount - max_dollar, max_dollar)
+    
+    return count_using(total, 100)
 
 
 def next_larger_dollar(bill):
@@ -143,6 +176,14 @@ def count_dollars_upward(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def count_help(amount, min_dollar):
+        if amount == total:
+            return 1
+        if amount > total or min_dollar is None:
+            return 0
+        return count_help(amount + min_dollar, min_dollar) + count_help(amount, next_larger_dollar(min_dollar))
+    
+    return count_help(0, 1)
 
 
 def print_move(origin, destination):
@@ -178,6 +219,13 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    help_pole = 6 - start - end
+    if n == 1:
+        print_move(start, end)
+    else:
+        move_stack(n - 1, start, help_pole)
+        print_move(start, end)
+        move_stack(n - 1, help_pole, end)
 
 
 from operator import sub, mul
