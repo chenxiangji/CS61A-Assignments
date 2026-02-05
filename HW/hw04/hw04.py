@@ -13,7 +13,18 @@ def shuffle(s):
     """
     assert len(s) % 2 == 0, 'len(seq) must be even'
     "*** YOUR CODE HERE ***"
-
+    m = 0
+    num = len(s)
+    s_transmit = [None for _ in range(num)]
+    for i in range(int(num / 2)):
+        if m == 0:
+            s_transmit[2 * i] = s[i]
+            m = m + 1
+        if m == 1:
+            s_transmit[2 * i + 1] = s[int(num / 2) + i]
+            m = m - 1
+        
+    return s_transmit
 
 def deep_map(f, s):
     """Replace all non-list elements x with f(x) in the nested list s.
@@ -38,6 +49,11 @@ def deep_map(f, s):
     True
     """
     "*** YOUR CODE HERE ***"
+    for i in range(len(s)):
+        if type(s[i]) == int:
+            s[i] = f(s[i])
+        else:
+            deep_map(f, s[i])
 
 
 HW_SOURCE_FILE=__file__
@@ -47,11 +63,13 @@ def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
     "*** YOUR CODE HERE ***"
+    return ['planet', mass]
 
 def mass(p):
     """Select the mass of a planet."""
     assert is_planet(p), 'must call mass on a planet'
     "*** YOUR CODE HERE ***"
+    return p[1]
 
 def is_planet(p):
     """Whether p is a planet."""
@@ -104,6 +122,22 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_mobile(m):
+        left_arm = left(m)
+        left_torque = length(left_arm) * total_mass(end(left_arm))
+    elif is_planet(m):
+        return True
+    
+    if is_mobile(m):
+        right_arm = right(m)
+        right_torque = length(right_arm) * total_mass(end(right_arm))
+    elif is_planet(m):
+        return True
+
+    left_balanced = balanced(end(left_arm))
+    right_balanced = balanced(end(right_arm))
+
+    return left_torque == right_torque and left_balanced and right_balanced
 
 
 def berry_finder(t):
@@ -123,8 +157,14 @@ def berry_finder(t):
     >>> berry_finder(t)
     True
     """
-    "*** YOUR CODE HERE ***"
-
+    "*** YOUR CODE HERE ***"    
+    if label(t) == 'berry':
+        return True
+        
+    for branch in branches(t):
+        if berry_finder(branch): 
+            return True
+    return False
 
 HW_SOURCE_FILE=__file__
 
@@ -140,6 +180,11 @@ def max_path_sum(t):
     """
     "*** YOUR CODE HERE ***"
 
+    if is_leaf(t):
+        return label(t)
+    
+    branch_max = [max_path_sum(b) + label(t) for b in branches(t)]
+    return max(branch_max)
 
 def mobile(left, right):
     """Construct a mobile from a left arm and a right arm."""
